@@ -1,0 +1,148 @@
+---
+title: "Topsis_Analysis_Caribbean_Islands"
+author: "César"
+date: "2022-12-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Topsis analysis of Caribean Islands
+
+The Technique for Order of Preference by Similarity to Ideal Solution (TOPSIS) is a multiple-criteria decision making (MCDM) method.
+It is based on the fundamental premise that the best solution has the shortest distance from the positive-ideal solution, and the longest distance from the negative-ideal one. Alternatives are ranked with the use of an overall index calculated based on the distances from the ideal solutions.
+
+In this project, we employ the topsis package to perform an analysis on a dataset of different characteristics of 47 French Polynesian Caribbean islands to know which islands have the better conditions to construct a resort.
+
+At the first part we are going to clean the data and visually explore some metrics.
+
+## Data Cleaning and exploration
+
+
+```{r}
+library(topsis)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(forcats)
+```
+
+
+```{r}
+github_link <- "https://raw.githubusercontent.com/cmuro27/Data_Analysis_Projects/main/dataresort.csv"
+resort <- read_csv(url(github_link))
+View(resort)
+```
+
+Let us have information about the dataset
+
+```{r}
+str(resort)
+```
+We observe that from the eighth column start the characteristics which will be evaluated for the topsis.
+
+Let us rename the first column names
+```{r}
+colnames(resort)[1] <-"Island_name"
+colnames(resort)[2] <-"INSEE"
+colnames(resort)[4] <- "Capital"
+colnames(resort)[5] <- "Area km2"
+colnames(resort)[6] <- "Total_Population"
+colnames(resort)[7] <- "Density"
+```
+
+Now, for the columns Total_Population and Density_(pers/km2) , we change the type as numeric. But before, we need to remove the spaces
+
+```{r}
+resort$Total_Population <- gsub('\\s+', '', resort$Total_Population)
+resort$`Density` <- gsub('\\s+', '', resort$`Density`)
+```
+Proceedind to convert to numeric Total_Population 
+
+```{r}
+resort$Total_Population <- as.numeric(resort$Total_Population)
+resort$`Density` <- as.numeric(gsub(",","",resort$`Density`))
+```
+
+Then, our dataframe takes the form
+
+```{r}
+View(resort)
+```
+
+with the characteristics 
+ 
+ 
+```{r}
+str(resort)
+```
+Let us visualize explore which islands are the biggest, and which have more density.
+A bar plot by population
+
+```{r}
+resort %>% ggplot(aes(x=Total_Population,y=Island_name))+geom_bar(stat = "identity") 
+```
+Let us get a table with the 5 most populated islands
+
+```{r}
+ head(resort[order(resort$Total_Population,decreasing = TRUE),],5)
+```
+
+A bar plot by density
+```{r}
+ggplot(resort,aes(x=Density,y=Island_name))+geom_bar(stat = "identity")
+```
+
+
+Let us get a table with the most densely populated islands
+```{r}
+ head(resort[order(resort$Density,decreasing = TRUE),],5)
+```
+
+And finally, a bar plot for area
+
+```{r}
+sort_data <- resort[order(resort$`Area km2`,decreasing = TRUE),]
+View(sort_data)
+```
+
+
+```{r}
+ggplot(sort_data,aes(x=`Area km2`,y=Island_name))+geom_bar(stat = "identity")
+```
+ 
+
+```{r}
+ head(resort[order(resort$`Area km2`,decreasing = TRUE),],5)
+```
+
+## Topsis Analysis.
+
+We need to define a weight vector, and a sign vector that defines the sign of the influence. 
+Notice that the sum of the weights must be equal to 1.
+Then we use the topsis function
+
+```{r}
+w <- c(0.11,0.11,0.05,0.11,0.11,0.07,0.07,0.09,0.07,0.11,0.1) 
+i <- c("+","+","+","+","+","+","+","+","+","+","+")
+sum(w)
+
+datare <- select(resort,8:18)
+nm <- data.matrix(datare)
+View(resort[,1])
+results <- topsis(nm,w,i)
+results <- data.matrix(results)
+class(results)
+final <- cbind.data.frame(resort[,1],results)
+```
+Therefore, the rank of the best islands to consider establish a resort is
+
+```{r}
+head(final[order(final$`rank`,decreasing = FALSE),],5)
+```
+
+
+
