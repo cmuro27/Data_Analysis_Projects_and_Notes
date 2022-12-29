@@ -4,7 +4,12 @@ library(readxl)
 library(tidyverse)
 library(ggrepel)
 
-my_data <- read_excel("C:/Users/cmuro/Downloads/disauto.xls",skip=1)
+#Reading the data
+url <- "https://github.com/cmuro27/Data_Analysis_Projects/blob/main/disauto.xls"
+my_data <- read_excel(url,skip=1)
+str(my_data)
+
+#Rearranging the dataset by population segments based on age and transforming sex into a category
 disauto <- my_data[order(my_data$Edad),]
 disauto <- disauto %>%
 mutate( Categoria = case_when(
