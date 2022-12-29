@@ -1,2 +1,2 @@
 # Data_Analysis_Projects
-Data analysis and data science with Python and R
+The notes are taken by me from the courses offered by DataCamp.
