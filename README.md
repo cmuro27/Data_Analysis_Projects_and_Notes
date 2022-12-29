@@ -1,2 +1,2 @@
 # Data_Analysis_Projects
-Data analysis and data science with Python and R
+Data analysis and data science projects with Python and R
