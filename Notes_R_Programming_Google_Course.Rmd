@@ -1,0 +1,688 @@
+---
+title: "Notes from R Programming Google Course"
+author: "César"
+date: "2023-01-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Introduction
+
+Computer programming: Giving instructions to a computer to perform an action or set of actions.
+
+Programming languages are the words and symbols we use to write instructions for computers to follow.
+
+Coding is writing instructions to the computer in the syntax of a specific language programming.
+
+Programming clarifies the steps of your analysis, saves time, and easily reproduces and share your work.
+
+R is a programming language frequently used for statistical analysis, visualization, and other data analysis. RStudio es a software environment for the R language. R is accessible, data-centric, open-source, and has a great community. It is a data centric programming language.
+
+In R Studio, the R Console is often referred to as the console pane (pictured below). The console is the place where you give commands to R. An integrated development environment (IDE) is a software application that brings together all the tool you may want to use in a single place.
+
+## Programming fundamentals
+
+Functions(R) are a body of reusable code used to perform specifics tasks in R.
+
+Argument(R) is information that a function R needs in order to run.
+
+A variable(R) is a representation of a value in R that can be stores for use later during programming. Variables are also called objects.
+
+<- is the assignment operator in R.
+
+Vector(R) is a group of data elements of the same type stored in a sequence in R.
+
+Pipe(R) is a tool in R for expressing a sequence of multiple operations, represented with %>% It is used to apply the output of one function into another function.
+
+CRAN (Comprehensive R Archive Network) is an online archive with R packages, source code, manuals and documentation.
+
+A top of the list of useful packages is tidyverse, which is a system of packages of R with a common design philosophy for data manipulation, exploration, and visualization.
+
+8 core tydeverse packages are ggplot, tibble, tydr, readr, purrr, dplyr, stringr, forcats.
+
+Some essential packages for the workflow of data analysts:
+
+ggplot2(R): Create a variety of data viz by applying different visual properties to the data variables in R.
+
+tydr(R): A package used for data cleaning to make tidy data.
+
+readr(R): Using for importing data.
+
+dplyr(R): Consistent set of functions that help you complete some common data manipulation tasks.
+
+forecast(R): The R package forecast provides methods and tools for displaying and analysing univariate time series forecasts.
+
+Factors(R): Store categorical data in R where the data values are limited and usually based on finite group.
+
+R dataframes: A dataframe is a collection of columns. They should be named.
+
+Tibbles are like streamlined data frames. They never change the data types of the inputs. they never change the name of the variables. Never create new rows. Make printing easier.
+
+
+Data frames and tibbles are the building blocks for data analysis in R.
+
+## Data import basics
+
+The default installation of R comes with a number of preloaded datasets that you can practice with. You can use the data() function to load these datasets in R. If you run the data function without an argument, R will display a list of the available datasets. 
+
+The readr package in R is a great tool for reading rectangular data. Rectangular data is data that fits nicely inside a rectangle of rows and columns, with each column referring to a single variable and each row referring to a single observation. 
+
+The goal of readr is to provide a fast and friendly way to read rectangular data. readr supports several read_ functions. Each function refers to a specific file format.
+•	read_csv(): comma-separated values (.csv) files
+•	read_tsv(): tab-separated values files
+•	read_delim(): general delimited files
+•	read_fwf(): fixed-width files
+•	read_table(): tabular files where columns are separated by white-space
+•	read_log(): web log files
+
+To import spreadsheet data into R, you can use the readxl package. The readxl package makes it easy to transfer data from Excel into R. Readxl supports both the legacy .xls file format and the modern xml-based .xlsx file format. 
+The readxl package is part of the tidyverse but is not a core tidyverse package, so you need to load readxl in R by using the library() function.  
+library(readxl)
+
+You can use the read_excel() function to read a spreadsheet file just like you used read_csv() function to read a  .csv file. 
+
+
+## General exploratory analysis of palmer penguins dataset
+Let us import the following libraries and get a general insight of the dataset palmer penguins
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(Hmisc)
+library(skimr)
+library(palmerpenguins)
+```
+These are libraries to perform analysis and data visualization. Now let us overview the palmer penguins dataset. Let us know the dimensions, the number and type of the columns:
+
+```{r}
+view(penguins)
+dim(penguins)
+str(penguins)
+
+```
+
+Now let us explore the data with some symmary statistics 
+
+```{r}
+summary(penguins)
+skim_without_charts(penguins)
+ggplot(data=penguins,aes(x=flipper_length_mm,y=body_mass_g))+geom_point(aes(color=species))
+```
+
+
+## Introducing dates in R
+The following commands are for getting the current date, date with hour, and how to convert to the standard date format
+```{r}
+today()
+now()
+ymd("2021-01-20")
+ymd(20210120)
+ymd_hms("2021-01-20 20:11:59")
+as_date(now())
+```
+## General manipulation and exploratory analysis of the dataset diamonds
+
+Let us import the necessary libraries
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(Hmisc)
+library(skimr)
+```
+
+Now we get the first five rows of the diamonds dataset, a description of the type of data with the function glimpse(), and a statistical summary with the function skim_without_charts()
+
+```{r}
+head(diamonds)
+glimpse(diamonds)
+str(diamonds)
+skim_without_charts(diamonds)
+```
+Another simple function that you may use regularly is the `colnames()` function. 
+It returns a list of column names from your dataset. 
+You can check out this function by running the code chunk below:
+
+```{r}
+colnames(diamonds)
+```
+Now, let us clean the data.
+You might need to rename columns, or variables. There is a function for that rename()
+```{r}
+rename(diamonds,carat_new=carat)
+```
+
+
+You can rename more than one variable in the same `rename()` code.
+```{r}
+rename(diamonds, carat_new = carat, cut_new = cut)
+```
+
+Another handy function for summarizing your data is `summarize().
+
+One of the most commonly used visualization packages is the `ggplot2` package, which is loaded automatically
+when you install and load `tidyverse.
+The `diamonds` dataset that you have been using so far is a `ggplot2` dataset.
+
+```{r}
+ggplot(data = diamonds, aes(x=carat, y=price))+geom_point()
+```
+If you wanted to change the color of each point
+so that it represented another variable, such as the cut of the diamond,
+you can change the code like this:
+```{r}
+ggplot(data=diamonds,aes(x=carat,y=price,color=cut))+geom_point()
+```
+
+Sometimes when you are trying to represent many different aspects of your data in a visual, 
+it can help to separate out some of the components. For example, you could create
+a different plot for each type of cut. `ggplot2` makes it easy to do this with the `facet_wrap()` function:
+
+```{r}
+ggplot(data=diamonds,aes(x=carat,y=price,color=cut))+geom_point()+facet_wrap(~cut)
+```
+
+## Pipes with the dataset ToothGrowth
+Remind that a pipe is a tool in R for expressing a sequence of multiple operations, represented with %>%.
+Now we are going to explore and manipulate the dataset ToothGrowth
+
+```{r}
+library(dplyr)
+library(tidyr)
+data("ToothGrowth")
+View(ToothGrowth)
+```
+Let us filter data with the filter function
+
+```{r}
+filtered_tg <- filter(ToothGrowth,dose==0.5)
+View(filtered_tg)
+```
+and arranging the data 
+
+```{r}
+arrange(filtered_tg)
+```
+
+Now a nested function to filter and sort the data
+```{r}
+arrange(filter(ToothGrowth,dose==0.5),len)
+```
+
+Now we use pipes to manipulate the data and introduce the group by function
+
+```{r}
+filtered_tootgrowth <- ToothGrowth %>% 
+  filter(dose==0.5) %>% 
+  arrange(len)
+View(filtered_tootgrowth)
+```
+
+
+```{r}
+filtered_tootgrowth <- ToothGrowth %>% 
+  filter(dose==0.5) %>% 
+  group_by(supp) %>% 
+  summarise(mean_len=mean(len,na.rm=T),.group='drop')
+View(filtered_tootgrowth)
+```
+## Working with datasets
+We will explore some different types of how data is presented: dataframes and tibbles.
+There are three common sources for data:
+- A`package` with data that can be accessed by loading that `package`
+- An external file like a spreadsheet or CSV that can be imported into `R`
+- Data that has been generated from scratch using `R` code
+
+```{r}
+library(tidyverse)
+```
+
+The most common way to generate a data frame is to create individual
+vectors of data and the combine them into a data frame using data.frame()
+
+```{r}
+names <- c('Adan','Set','Einos','Cainan')
+```
+
+Create a vector of ages
+
+```{r}
+age <- c(110,100,102,95)
+```
+As we saw, a dataframe is a collection of columns.
+
+Create the data frame with the function data frame
+
+```{r}
+people <- data.frame(names,age)
+```
+
+Now, let us inspect the data frame
+
+```{r}
+head(people)
+str(people)
+```
+
+You could use `mutate()` if you want to create a new variable that would capture  each person's age in twenty years.
+
+```{r}
+mutate(people,age_in_20=age+20)
+```
+
+Tibbles are a little different from standard data frames. A data frame is a collection of columns, like a spreadsheet or a SQL table.
+
+Tibbles are like streamlined data frames that are automatically set to pull up only the first 10 rows of a dataset, and only as many columns as can fit on the screen. This is really useful when you’re working with large sets of data. Unlike data frames, tibbles never change the names of your variables, or the data types of your inputs. Overall, you can make more changes to data frames, but tibbles are easier to use.
+
+to convert a dataframe
+
+```{r}
+data("diamonds")
+View(diamonds)
+
+as_tibble(diamonds)
+```
+
+## Importing and data manipulation of the hotel bookings dataset
+
+We import the dataset from my github
+
+```{r}
+library(tidyverse)
+library(readr)
+url <- "https://raw.githubusercontent.com/cmuro27/Data_Analysis_Projects/main/hotel_bookings.csv"
+hotel_bookings <- read_csv(url)
+View(hotel_bookings)
+```
+
+Now we obtain information about the dataframe
+
+```{r}
+head(hotel_bookings)
+str(hotel_bookings)
+colnames(hotel_bookings)
+```
+and about summary statistics of the dataset
+
+```{r}
+skim_without_charts(hotel_bookings)
+```
+Let's say you are primarily interested in the following variables: 'hotel', 'is_canceled', and 'lead_time'. Create a new data frame with just those columns
+
+```{r}
+trimmed_df <- hotel_bookings %>% select(hotel,is_canceled,lead_time) %>% rename(hotel_type=hotel)
+View(trimmed_df)
+```
+Another common task is to either split or combine data in different columns. In this example, you can combine the arrival month and year into one column using the unite() function:
+
+```{r}
+example_df <- hotel_bookings %>%
+  select(arrival_date_year, arrival_date_month) %>% 
+  unite(arrival_month_year, c("arrival_date_month", "arrival_date_year"), sep = " ")
+View(example_df)  
+```
+Use the`mutate()` function to make changes to your columns. Let's say you wanted to create a new column that summed up all the adults, children, and babies on a reservation for the total number of people. Modify the code chunk below to create that new column: 
+
+```{r}
+example_df <- hotel_bookings %>% mutate(guests=adults+children+babies)
+View(example_df)
+```
+
+Now it's time to calculate some summary statistics! Calculate the total number of canceled bookings and the average lead time for booking. Make a column called 'number_canceled' to represent the total number of canceled bookings. Then,
+make a column called 'average_lead_time' to represent the average lead time. Use the `summarise()` function
+
+```{r}
+example_df <- hotel_bookings %>% summarise(number_canceled=sum(is_canceled),average_lead_time=mean(lead_time))
+View(example_df)
+```
+
+Let's say we want to to arrange the data by most lead time to least lead time because you want to focus on bookings that were made far in advance.
+
+```{r}
+hotel_bookings_v2 <- arrange(hotel_bookings,-lead_time)
+View(hotel_bookings_v2)
+```
+
+You can also find out the maximum and minimum lead times without sorting the whole dataset
+
+```{r}
+max(hotel_bookings$lead_time)
+min(hotel_bookings$lead_time)
+mean(hotel_bookings$lead_time)
+```
+
+Let us analyze the category city hotel
+
+```{r}
+hotel_bookings_city <- filter(hotel_bookings,hotel=='City Hotel')
+View(hotel_bookings_city)
+```
+
+What the average lead time for this set of hotels
+
+```{r}
+mean(hotel_bookings_city$lead_time)
+```
+
+Now, your boss wants to know a lot more information about city hotels, so you decide to use the `group_by()`and`summarise()` functions. You can also use the pipe operator to make your code easier to follow. You will store the new dataset in a data frame named 'hotel_summary':
+
+```{r}
+hotel_summary <- hotel_bookings %>% group_by(hotel) %>% summarise(average_lead_time=mean(lead_time),                                                                  min_lead_time=min(lead_time),max_lead_time=max(lead_time))
+
+head(hotel_summary)
+```
+
+Let us see different elements in a column
+
+```{r}
+unique(hotel_bookings[['hotel']])
+length(unique(hotel_bookings[['hotel']]))
+```
+
+```{r}
+length(which(hotel_bookings[['hotel']] == "Resort Hotel")) 
+length(which(hotel_bookings[['hotel']] == "City Hotel"))
+```
+```{r}
+describe(hotel_bookings[['hotel']])
+```
+
+
+
+## Data manipulation of a created data frame and penguins dataset
+
+Manually creating a data frame 
+
+```{r}
+id <- c(1:10)
+name <- c("John Mendes", "Rob Stewart", "Rachel Abrahamson", "Christy Hickman", "Johnson Harper", "Candace Miller", "Carlson Landy", "Pansy Jordan", "Darius Berry", "Claudia Garcia")
+job_title <- c("Professional", "Programmer", "Management", "Clerical", "Developer", "Programmer", "Management", "Clerical", "Developer", "Programmer")
+
+employee <- data.frame(id,name,job_title)
+View(employee)
+```
+
+Now we look to transform data. Some functions are separate(), unite(), and mutate()
+
+```{r}
+separate(employee, name, into = c('first_name','last_name'),sep = ' ')
+```
+
+In penguins data frame, we organize the data with the filter(), arrange(), group_by() functions
+
+```{r}
+penguins %>% arrange(bill_length_mm)
+```
+
+Arrange in descending order
+
+```{r}
+penguins %>% arrange(-bill_length_mm)
+```
+Let us group the data and pipe with the drop na function
+
+```{r}
+penguins %>% group_by(island) %>% drop_na() %>% summarise(mean_bill_length_mm=mean(bill_length_mm))
+
+penguins %>% group_by(species) %>% drop_na() %>% summarise(mean_body=mean(body_mass_g))
+
+penguins %>% group_by(island) %>% drop_na() %>% summarise(max_bill_length_mm=max(bill_length_mm))
+
+penguins %>% group_by(species,island) %>% drop_na() %>% summarise(max_bl=max(bill_depth_mm),mean_bl=mean(bill_length_mm))
+```
+
+
+
+
+## Inspectind data with the preload dataset called quartet
+
+Importing libraries
+
+```{r}
+library(Tmisc)
+library(datasauRus)
+data(quartet)
+View(quartet)
+```
+Correlation in statistics is the measure of the degree to which two variables move in linear relationship to each other. It is important to remember that correlation doesn’t mean that one event causes another.
+
+Causation refers to the idea that an event leads to a specific outcome.
+
+When you make conclusions from data analysis, you need to make sure that you don’t assume a causal relationship between elements of your data when there is only a correlation.
+
+
+
+Let us inspect the mean, the standard deviation, and the correlation factor
+
+```{r}
+quartet %>%
+  group_by(set) %>%
+  summarise(mean(x),sd(x),mean(y),sd(y),cor(x,y))
+```
+Let us plot to explore visually the data
+
+```{r}
+ggplot(quartet,aes(x,y))+geom_point()+geom_smooth(method=lm,se=FALSE)+facet_wrap(~set)
+```
+We observe that there is a linear relationship in the sets I and III.
+
+The bias function finds the average amount that the actual outcome is greater than the predicted outcome. It is included in the sim design package.
+
+```{r}
+library(SimDesign)
+actual_temp <- c(68.3,70,72.4,71,67,70)
+predict_temp <- c(67.9, 69, 71.5, 70,67,69)
+bias(actual_temp,predict_temp)
+```
+
+Unbiased data should take a value close to zero.
+
+## Data visualization in R with the penguins and hotel booking dataset
+Importing libraries
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library("dplyr")
+library("here")
+library("skimr")
+library("janitor")
+data("penguins")
+```
+
+First plot
+```{r}
+ggplot(data=penguins)+geom_point(mapping = aes(x=flipper_length_mm,y=body_mass_g))
+```
+
+Alternative formulation, writing the aes argument in the ggplot() function, which is more common
+
+```{r}
+ggplot(data = penguins, mapping = aes(x = flipper_length_mm, y = body_mass_g)) +  geom_point()
+```
+
+Charts with the hotel bookings dataset
+
+```{r}
+ggplot(hotel_bookings)+geom_bar(mapping = aes(x=market_segment))+facet_wrap(~hotel)
+```
+
+This creates two bar graphs: one for 'city_hotel' data and one for 'resort_hotel' data. The x axis is 'market_segment' and the y axis is 'count' for both charts. In this visualization it is unclear where the data is from, what the main takeaway is, or even what the data is showing. To explain all of that, you can leverage annotations.
+
+The first step will be adding a title; that is often the first thing people will pay attention to when they encounter a data visualization for the first time. To add a title, you will add `labs()` at the end of your `ggplot()` command and then input a title there.
+
+```{r}
+ggplot(hotel_bookings)+geom_bar(mapping=aes(x=market_segment))+facet_wrap(~hotel)+labs(title = "Market segment vs Type of hotel")
+```
+Add detail about what time period this data covers
+
+```{r}
+mindate <- min(hotel_bookings$arrival_date_year)
+maxdate <- max(hotel_bookings$arrival_date_year)
+```
+
+```{r}
+ggplot(hotel_bookings)+
+  geom_bar(mapping = aes(x=market_segment))+facet_wrap(~hotel)+
+  labs(title = "Market segment vs Type of hotel", subtitle=paste0("Data from: ", mindate, " to ", maxdate))+
+  theme(axis.text.x = element_text(angle = 45))
+
+```
+You decide to switch the subtitle to a caption
+
+```{r}
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = market_segment)) +
+  facet_wrap(~hotel) +
+  theme(axis.text.x = element_text(angle = 45)) +
+  labs(title="Comparison of market segments by hotel type for hotel bookings",
+       caption=paste0("Data from: ", mindate, " to ", maxdate))
+```
+Now you want to clean up the x and y axis labels to make sure they are really clear.
+
+```{r}
+ggplot(hotel_bookings)+geom_bar(mapping = aes(x=market_segment))+
+  facet_wrap(~hotel)+theme(axis.text.x = element_text(angle = 45))+
+  labs(title="Comparison of market segments by hotel type for hotel bookings",
+       caption=paste0("Data from: ", mindate,"to ",maxdate),x="Market segment",y="Number of bookings")
+```
+Now you can use the `ggsave()` function to save the chart
+
+```{r}
+ggsave('hotel_booking_chart.png', width=7,
+       height=7)
+```
+
+R filtering a dataset to just city hotels that are online TA
+
+```{r}
+ggplot(data = hotel_bookings)+geom_bar(mapping = aes(x=hotel))
+```
+
+Now by filtering the data
+
+```{r}
+ggplot(data = hotel_bookings) +
+  geom_point(mapping = aes(x = lead_time, y = children))
+
+ggplot(data=hotel_bookings)+geom_bar(mapping = aes(x=hotel,fill=market_segment))
+
+ggplot(data=hotel_bookings)+geom_bar(mapping = aes(x=hotel))+facet_wrap(~market_segment)
+```
+```{r}
+onlineta_city_hotels <- filter(hotel_bookings, (hotel=="City Hotel" & market_segment=="Online TA"))
+View(onlineta_city_hotels)
+```
+
+```{r}
+ggplot(data = onlineta_city_hotels) +
+  geom_point(mapping = aes(x = lead_time, y = children))
+```
+
+
+
+Alternative filtering with pipe
+
+```{r}
+onlineta_city_hotels_v2 <- hotel_bookings %>%
+  filter(hotel=="City Hotel") %>%
+  filter(market_segment=="Online TA")
+```
+
+
+
+### Enhancing plots by changing aesthetics
+
+```{r}
+library(ggplot2)
+library(palmerpenguins)
+data("penguins")
+
+```
+We can see for each specie, we can map a new variable to a new asthetic
+
+```{r}
+ggplot(penguins)+geom_point(mapping = aes(x=flipper_length_mm,y=body_mass_g,color=species))
+
+ggplot(penguins)+geom_point(mapping = aes(x=flipper_length_mm,y=body_mass_g,shape=species))
+
+ggplot(penguins)+geom_point(mapping = aes(x=flipper_length_mm,y=body_mass_g,color=species,shape=species))
+
+ggplot(penguins)+geom_point(mapping = aes(x=flipper_length_mm,y=body_mass_g,alpha=species))
+
+ggplot(penguins)+geom_point(mapping = aes(x=flipper_length_mm,y=body_mass_g,color="purple"))
+
+ggplot(penguins)+geom_point(mapping = aes(x=flipper_length_mm,y=body_mass_g),color="purple")
+```
+We can combine two different geom in the same plot
+
+```{r}
+ ggplot(penguins)+geom_smooth(mapping = aes(x=flipper_length_mm,y=body_mass_g))+
+   geom_point(mapping=aes(x=flipper_length_mm,y=body_mass_g))
+```
+Now for different species
+
+```{r}
+ggplot(penguins)+geom_smooth(mappin=aes(x=flipper_length_mm,y=body_mass_g,linetype=species))
+```
+With the jittering package we can add a small noise in points that are overlape in scatterplots
+
+```{r}
+ggplot(penguins)+geom_jitter(mapping=aes(x=flipper_length_mm,y=body_mass_g,linetype=species))
+```
+### Now we look to diamonds data
+
+```{r}
+ggplot(data=diamonds)+geom_bar(mapping = aes(x=color, fill=cut))+facet_wrap(~cut)
+```
+Facet grid
+
+```{r}
+ggplot(data=penguins)+geom_point(mapping=aes(x=flipper_length_mm,y=body_mass_g,color=species))+facet_grid(sex~species)
+```
+### Annotate on visualizations
+
+Using the penguins dataset
+
+```{r}
+ggplot(data=penguins)+geom_point(mapping=aes(x=flipper_length_mm,y=body_mass_g,color=species))+
+  labs(title="Palmer penguins: Body mass vs Flipper length", subtitle = "Sample of three penguins species", caption = "Data collected by Dr. Kristen German")
+```
+To put text inside the grid
+
+```{r}
+ggplot(data=penguins)+geom_point(mapping=aes(x=flipper_length_mm,y=body_mass_g,color=species))+
+  labs(title="Palmer penguins: Body mass vs Flipper length", subtitle = "Sample of three penguins species", caption = "Data collected by Dr. Kristen German")+
+  annotate("text",x=220,y=3500,label="The Gentoo are the largest", color="purple", fontface="bold" ,size=4.5)
+```
+Finally, We add we want to include some notes on charts of the hotel booking dataset.
+
+Determining the time the data covers
+
+```{r}
+min(hotel_bookings$arrival_date_year)
+max(hotel_bookings$arrival_date_year)
+```
+
+```{r}
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = market_segment)) +
+  facet_wrap(~hotel)+
+  theme(axis.text.x = element_text(angle = 45))+labs(title="Counts of market segment by type of hotel",subtitle=paste0("Data from: ", mindate, " to ", maxdate))
+```
+```{r}
+ggplot(data = hotel_bookings) +
+  geom_bar(mapping = aes(x = market_segment)) +
+  facet_wrap(~hotel)+
+  theme(axis.text.x = element_text(angle = 45))+labs(title="Counts of market segment by type of hotel",
+                                                     x="Market segment", y="Number of bookings",
+                                                     caption =paste0("Data from: ", mindate, " to ", maxdate))
+```
+
+
+
+
